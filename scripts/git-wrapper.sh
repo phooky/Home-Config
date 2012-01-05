@@ -8,7 +8,7 @@
 GIT_MEMO_FILE=~/.git-pulls
 GIT_BINARY=/usr/bin/git
 
-if [ "pull-all" == "$1" ]
+if [ "pull-all" = "$1" ]
 then
     echo "Pulling all memoized repositories."
     while read REPO ; do
@@ -20,11 +20,11 @@ then
 fi
 
 ${GIT_BINARY} $*
-if [ $? == 0 ]    
+if [ $? = 0 ]    
 then
 
     EXTRACT_DIR='s/.*\/\([^\.]*\)\.git.*/\1/'
-    if [ "clone" == "$1" ]
+    if [ "clone" = "$1" ]
     then
 	if [ -n "${3}" ]
 	then
