@@ -102,7 +102,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-alias git=/home/phooky/scripts/git-wrapper.sh
+alias git=${HOME}/scripts/git-wrapper.sh
 
 source ~/.bash_profile
 

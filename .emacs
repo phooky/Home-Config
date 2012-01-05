@@ -33,7 +33,8 @@
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (add-to-list 'auto-mode-alist '("\\.cs$" . csharp-mode))
 (add-to-list 'auto-mode-alist '("\\.module$" . csharp-mode))
-
+(global-set-key "\M-[1;5C"    'forward-word)      ; Ctrl+right   => forward word
+(global-set-key "\M-[1;5D"    'backward-word)     ; Ctrl+left    => backward word
 (defun my-c-mode-common-hook ()
   (setq c-basic-offset 2)
   (c-set-offset 'substatement-open 0))
