@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Git wrapper for memoizing cloned repositories and implementing
