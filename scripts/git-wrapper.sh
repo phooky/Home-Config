@@ -35,6 +35,11 @@ then
 	memoize_dir=`pwd`/${memoize_dir}
 	echo "Memoizing clone ${memoize_dir}."
 	echo ${memoize_dir} >> ${GIT_MEMO_FILE}
+	if [ -e "${3}/.gitmodules" ]
+	then
+		echo "Pulling submodules."
+		(cd "${3}"; git submodule init; git submodule update)
+	fi 
     fi
 
 fi
