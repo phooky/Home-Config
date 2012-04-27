@@ -4,6 +4,8 @@
 # Git wrapper for memoizing cloned repositories and implementing
 # "pull-all" to update memoized repositories from origin.
 #
+# Also automatically pulls and updates submodules, if present.
+#
 
 GIT_MEMO_FILE=~/.git-pulls
 GIT_BINARY=/usr/bin/git
@@ -14,6 +16,10 @@ then
     while read REPO ; do
 	pushd ${REPO}
 	${GIT_BINARY} pull
+	if [ -e .gitmodules ]
+	then
+		git submodule update
+	fi
 	popd
     done < ${GIT_MEMO_FILE}
     exit 0
@@ -28,18 +34,18 @@ then
     then
 	if [ -n "${3}" ]
 	then
-	    memoize_dir="${3}"
+	    repo_dir="${3}"
 	else
-	    memoize_dir=`echo ${2} | sed ${EXTRACT_DIR}`
+	    repo_dir=`echo ${2} | sed ${EXTRACT_DIR}`
 	fi
-	memoize_dir=`pwd`/${memoize_dir}
-	echo "Memoizing clone ${memoize_dir}."
-	echo ${memoize_dir} >> ${GIT_MEMO_FILE}
-	if [ -e "${3}/.gitmodules" ]
+	if [ -e "${repo_dir}/.gitmodules" ]
 	then
 		echo "Pulling submodules."
-		(cd "${3}"; git submodule init; git submodule update)
+		(cd "${repo_dir}"; git submodule init; git submodule update)
 	fi 
+	memoize_dir=`pwd`/${repo_dir}
+	echo "Memoizing clone ${memoize_dir}."
+	echo ${memoize_dir} >> ${GIT_MEMO_FILE}
     fi
 
 fi
