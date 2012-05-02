@@ -10,7 +10,9 @@
 GIT_MEMO_FILE=~/.git-pulls
 GIT_BINARY=/usr/bin/git
 
-if [ "pull-all" = "$1" ]
+GIT_CMD="$1"
+
+if [ "pull-all" = ${GIT_CMD} ]
 then
     echo "Pulling all memoized repositories."
     while read REPO ; do
@@ -25,12 +27,20 @@ then
     exit 0
 fi
 
-${GIT_BINARY} $*
+ARGS=$*
+
+if [ "push" = ${GIT_CMD} ]
+then
+    ARGS="push --recurse-submodules=check ${@:2}"
+fi
+
+${GIT_BINARY} ${ARGS}
+
 if [ $? = 0 ]    
 then
 
     EXTRACT_DIR='s/.*\/\([^\.]*\)\.git.*/\1/'
-    if [ "clone" = "$1" ]
+    if [ "clone" = ${GIT_CMD} ]
     then
 	if [ -n "${3}" ]
 	then
