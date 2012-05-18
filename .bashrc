@@ -104,5 +104,5 @@ fi
 
 alias git=${HOME}/scripts/git-wrapper.sh
 
-source ~/.bash_profile
+[ -x ~/.bash_profile ] && source ~/.bash_profile
 

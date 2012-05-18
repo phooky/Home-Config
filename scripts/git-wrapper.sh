@@ -27,7 +27,7 @@ then
     exit 0
 fi
 
-ARGS=$*
+ARGS="$*"
 
 if [ "push" = ${GIT_CMD} ]
 then
