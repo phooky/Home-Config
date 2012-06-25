@@ -19,7 +19,7 @@ then
     exit 0
 fi
 
-${GIT_BINARY} $*
+${GIT_BINARY} "$@"
 if [ $? = 0 ]    
 then
 
