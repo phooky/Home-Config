@@ -31,6 +31,7 @@ fi
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
+    xterm) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -48,11 +49,27 @@ if [ -n "$force_color_prompt" ]; then
 	color_prompt=
     fi
 fi
+txtblk='\e[0;30m' # Black - Regular
+txtred='\e[0;31m' # Red
+txtgrn='\e[0;32m' # Green
+txtylw='\e[0;33m' # Yellow
+txtblu='\e[0;34m' # Blue
+txtpur='\e[0;35m' # Purple
+txtcyn='\e[0;36m' # Cyan
+txtwht='\e[0;37m' # White
+bldblk='\e[1;30m' # Black - Bold
+bldred='\e[1;31m' # Red
+bldgrn='\e[1;32m' # Green
+bldylw='\e[1;33m' # Yellow
+bldblu='\e[1;34m' # Blue
+bldpur='\e[1;35m' # Purple
+bldcyn='\e[1;36m' # Cyan
+bldwht='\e[1;37m' # White
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1="\[${txtgrn}\]${debian_chroot:+($debian_chroot)}\u@\h \[${txtwht}\]:: \[${txtylw}\]$(date "+%a %D %H:%M") \[${txtwht}\]:: \[${txtred}\]\w \[${txtwht}\]\n\$ "
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h :: $(date "+%a %D %H:%M") :: \w \n\$ '
 fi
 unset color_prompt force_color_prompt
 
@@ -104,5 +121,6 @@ fi
 
 alias git=${HOME}/scripts/git-wrapper.sh
 
+export PATH=${PATH}:~/bin
 [ -x ~/.bash_profile ] && source ~/.bash_profile
 
