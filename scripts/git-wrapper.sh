@@ -27,14 +27,12 @@ then
     exit 0
 fi
 
-ARGS="$@"
-
 if [ "push" = ${GIT_CMD} ]
 then
-    ARGS="push --recurse-submodules=check ${@:2}"
+    ${GIT_BINARY} push --recurse-submodules=check "${@:2}"
+else
+    ${GIT_BINARY} "$@"
 fi
-
-${GIT_BINARY} ${ARGS}
 
 if [ $? = 0 ]    
 then
