@@ -67,9 +67,9 @@ bldcyn='\e[1;36m' # Cyan
 bldwht='\e[1;37m' # White
 
 if [ "$color_prompt" = yes ]; then
-    PS1="\[${txtgrn}\]${debian_chroot:+($debian_chroot)}\u@\h \[${txtwht}\]:: \[${txtylw}\]$(date "+%a %D %H:%M") \[${txtwht}\]:: \[${txtred}\]\w \[${txtwht}\]\n\$ "
+    PS1="\[${txtgrn}\]${debian_chroot:+($debian_chroot)}\u@\h \[${txtwht}\]:: \[${txtylw}\]\$(date \"+%a %D %H:%M\") \[${txtwht}\]:: \[${txtred}\]\w \[${txtwht}\]\n\$ "
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h :: $(date "+%a %D %H:%M") :: \w \n\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h :: \$(date +%a %D %H:%M) :: \w \n\$ '
 fi
 unset color_prompt force_color_prompt
 
