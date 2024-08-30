@@ -22,6 +22,7 @@
  */
 
 #define F_CPU 16000000UL
+#include <stdbool.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
@@ -33,33 +34,35 @@
 uint8_t keyState[8];
 
 /** Pin assignments **/
-/* Keyboard pin  |  Atmega pin
- * --------------|------------
- *       1       |    B0
- *       2       |    B1
- *       3       |    B2
- *       4       |    vcc
- *       5       |    gnd
- *       6       |    B3
- *       7       |    B7
- *       8       |    D0
- *       9       |    D1
- *       10      |    D2
- *       11      |    D3
- *       12      |    C6
- *       13      |    C7
- *       14      |    D5
- *       15      |    D4
- *       16      |    D6
- *       17      |    D7
- *       18      |    B4
- *       19      |    B5
- *       20      |    B6
- *       21      |    F7
- *       22      |    F6
- *       23      |    F5
- *       24      |    F4
+/* Keyboard pin  |  Atmega pin | Function
+ * --------------|-------------|----------
+ *       1       |    B0       | CARRIER DETECT LED
+ *       2       |    B1       | ON LINE sw
+ *       3       |    B2       | FULL DUPLEX sw
+ *       4       |    vcc      | +5V
+ *       5       |    gnd      | GND
+ *       6       |    B3       | LOW SPEED sw
+ *       7       |    B7       | ROW 6
+ *       8       |    D0       | COLUMN 5
+ *       9       |    D1       | COLUMN 0
+ *       10      |    D2       | COLUMN 1
+ *       11      |    D3       | COLUMN 2
+ *       12      |    C6       | ROW 0
+ *       13      |    C7       | COLUMN 3
+ *       14      |    D5       | ROW 2
+ *       15      |    D4       | ROW 4
+ *       16      |    D6       | ROW 3
+ *       17      |    D7       | COLUMN 7
+ *       18      |    B4       | ROW 1
+ *       19      |    B5       | COLUMN 6
+ *       20      |    B6       | ROW 5
+ *       21      |    F7       | COLUMN 4
+ *       22      |    F6       | CTRL key
+ *       23      |    F5       | SHIFT key
+ *       24      |    F4       | NUM sw
  */
+
+/* Switch assignments */
 
 /** Keyboard matrix layout
  *  ----------------------
@@ -94,7 +97,15 @@ int charMap[59] = {
   KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON,
   KEY_BACKSPACE, -1, -1, -1, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N,
   KEY_M, KEY_COMMA, KEY_PERIOD, KEY_SLASH, -1, -1, -1, KEY_SPACE, -1 };
- 
+
+int numCharMap[59] = {
+  -1, -1, -1, -1, -1, -1, -1, KEYPAD_PLUS, KEYPAD_MINUS, KEYPAD_PERIOD,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, KEYPAD_7, KEYPAD_8, KEYPAD_9, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, KEYPAD_4, KEYPAD_5, KEYPAD_6, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  KEYPAD_1, KEYPAD_2, KEYPAD_3, -1, -1, -1, -1, -1, -1 };
+
 int8_t getKey(uint8_t s1, uint8_t s2) {
   return kbMatrix[(s2*7)+s1];
 }
@@ -133,6 +144,7 @@ void initLEDPin(void) {
 
 uint8_t key_count;
 uint8_t key_touched;
+bool sw_num;
 
 void init(void) {
   initMatrixPins();
@@ -192,6 +204,10 @@ void scanModifiers() {
   }
 }
 
+void scanSwitches() {
+    sw_num = READ_PIN(F,4);
+}
+    
 void scanLine(uint8_t s1) {
   uint8_t line = 
     (READ_PIN(D,0)?(1<<0):0) |
@@ -207,8 +223,15 @@ void scanLine(uint8_t s1) {
     if ((line & _BV(s2)) == 0) {
       int8_t key = getKey(s1,s2);
       if (key != -1) {
-	int mapped = charMap[key];
-	addToReport(mapped);
+        int mapped = -1;
+        if (sw_num) {
+          // Try numeric keymap
+          mapped = numCharMap[key];
+        }
+        if (mapped == -1) {
+          mapped = charMap[key];
+        }
+        addToReport(mapped);
       }
     }
   }
@@ -254,6 +277,7 @@ int main(void)
 	  clearReport();
 	  scanModifiers();
 	  scanMatrix();
+    scanSwitches();
 	  endReport();
 	  // debouncing delay
 	  _delay_ms(10);
